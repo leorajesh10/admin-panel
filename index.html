@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard - MyShop</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     .section { display: none; }
     .section.active { display: block; }
@@ -109,7 +108,9 @@
   </main>
 </div>
 
-<!-- JS Section -->
+<!-- ✅ Load Supabase library BEFORE using it -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <script>
   function showSection(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -121,12 +122,12 @@
     form.classList.toggle('hidden');
   }
 
-  // 🚀 Connect to Supabase
+  // ✅ Supabase setup
   const SUPABASE_URL = 'https://tkybnsyqxkhemuxohnqs.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRreWJuc3lxeGtoZW11eG9obnFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NDU3MjIsImV4cCI6MjA2ODIyMTcyMn0.UeiYJQto84QVLdszbiXR_S27LDOISFSyuHWRpiufV0k';
   const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // 🧠 Fetch Products
+  // 🧠 Fetch Products from Supabase
   async function fetchProducts() {
     const { data, error } = await supabase.from('products').select('*');
     if (error) {
@@ -135,7 +136,7 @@
     }
 
     const list = document.getElementById('product-list');
-    list.innerHTML = ''; // Clear old data
+    list.innerHTML = '';
 
     data.forEach((product) => {
       const item = document.createElement('li');
@@ -151,7 +152,7 @@
     });
   }
 
-  // Run on page load
+  // 📦 Load on page open
   window.onload = fetchProducts;
 </script>
 
