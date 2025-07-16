@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard - MyShop</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     .section { display: none; }
     .section.active { display: block; }
@@ -94,15 +95,7 @@
         <input type="number" placeholder="Price" class="block mb-2 p-2 w-full border rounded" />
         <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Save</button>
       </div>
-      <ul class="space-y-2">
-        <li class="flex justify-between bg-white p-4 rounded shadow">
-          <span>Product 1</span>
-          <div class="space-x-2">
-            <button class="text-blue-600 hover:underline">Edit</button>
-            <button class="text-red-600 hover:underline">Delete</button>
-          </div>
-        </li>
-      </ul>
+      <ul id="product-list" class="space-y-2"></ul>
     </section>
 
     <!-- Analytics Section -->
@@ -116,6 +109,7 @@
   </main>
 </div>
 
+<!-- JS Section -->
 <script>
   function showSection(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -126,6 +120,39 @@
     const form = document.getElementById('productForm');
     form.classList.toggle('hidden');
   }
+
+  // 🚀 Connect to Supabase
+  const SUPABASE_URL = 'https://tkybnsyqxkhemuxohnqs.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRreWJuc3lxeGtoZW11eG9obnFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NDU3MjIsImV4cCI6MjA2ODIyMTcyMn0.UeiYJQto84QVLdszbiXR_S27LDOISFSyuHWRpiufV0k';
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // 🧠 Fetch Products
+  async function fetchProducts() {
+    const { data, error } = await supabase.from('products').select('*');
+    if (error) {
+      console.error('❌ Error fetching products:', error);
+      return;
+    }
+
+    const list = document.getElementById('product-list');
+    list.innerHTML = ''; // Clear old data
+
+    data.forEach((product) => {
+      const item = document.createElement('li');
+      item.className = 'flex justify-between bg-white p-4 rounded shadow';
+      item.innerHTML = `
+        <span>${product.name} - ₹${product.price} (Stock: ${product.stock})</span>
+        <div class="space-x-2">
+          <button class="text-blue-600 hover:underline">Edit</button>
+          <button class="text-red-600 hover:underline">Delete</button>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  // Run on page load
+  window.onload = fetchProducts;
 </script>
 
 </body>
