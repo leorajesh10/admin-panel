@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <title>Admin Panel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- TailwindCSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ✅ TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Supabase JS SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.3/+esm"></script>
+
+  <!-- ✅ Supabase UMD version (for browsers) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body class="bg-gray-100 text-gray-800 font-sans">
@@ -35,18 +37,19 @@
     </main>
   </div>
 
-  <!-- Supabase JS Integration -->
-  <script type="module">
-    // ✅ Step 1: Set up Supabase
+  <!-- ✅ Connect Supabase + Load Data -->
+  <script>
+    // ✅ Supabase URL & Key
     const SUPABASE_URL = 'https://tkybnsyqxkhemuxohnqs.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRreWJuc3lxeGtoZW11eG9obnFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NDU3MjIsImV4cCI6MjA2ODIyMTcyMn0.UeiYJQto84QVLdszbiXR_S27LDOISFSyuHWRpiufV0k';
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    // ✅ Create Supabase client
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ✅ Step 2: Fetch products
+    // ✅ Load Products
     async function loadProducts() {
       const list = document.getElementById('product-list');
-      list.innerHTML = "<p class='text-gray-500'>Fetching from Supabase...</p>";
+      list.innerHTML = "<p class='text-gray-500'>Fetching products...</p>";
 
       const { data, error } = await supabase.from('products').select('*');
 
@@ -60,7 +63,7 @@
         return;
       }
 
-      list.innerHTML = ''; // Clear loading
+      list.innerHTML = ''; // Clear loading message
       data.forEach((product) => {
         const item = document.createElement('div');
         item.className = 'bg-white p-4 rounded shadow';
@@ -73,6 +76,7 @@
       });
     }
 
+    // ✅ Run it on page load
     loadProducts();
   </script>
 </body>
