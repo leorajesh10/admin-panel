@@ -2,159 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard - MyShop</title>
+  <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .section { display: none; }
-    .section.active { display: block; }
-  </style>
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.3/+esm"></script>
 </head>
-<body class="bg-gray-100 font-sans">
 
-<!-- Wrapper -->
-<div class="flex min-h-screen">
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <div class="min-h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md">
+      <div class="p-6 font-bold text-xl text-indigo-600">🛠 Admin Panel</div>
+      <nav class="flex flex-col px-4 space-y-4">
+        <a href="#" class="text-gray-700 hover:text-indigo-600">📊 Dashboard</a>
+        <a href="#" class="text-gray-700 hover:text-indigo-600">👥 Customers</a>
+        <a href="#" class="text-gray-700 hover:text-indigo-600">📦 Orders</a>
+        <a href="#" class="text-indigo-600 font-semibold">🛍 Products</a>
+        <a href="#" class="text-gray-700 hover:text-indigo-600">📈 Analytics</a>
+        <a href="#" class="text-red-600 hover:text-red-800">🚪 Logout</a>
+      </nav>
+    </aside>
 
-  <!-- Sidebar -->
-  <aside class="w-64 bg-white shadow-md">
-    <div class="p-6 font-bold text-xl text-indigo-600">🛠 Admin Panel</div>
-    <nav class="flex flex-col px-4 space-y-4">
-      <button onclick="showSection('dashboard')" class="text-left text-gray-700 hover:text-indigo-600">📊 Dashboard</button>
-      <button onclick="showSection('customers')" class="text-left text-gray-700 hover:text-indigo-600">👥 Customers</button>
-      <button onclick="showSection('orders')" class="text-left text-gray-700 hover:text-indigo-600">📦 Orders</button>
-      <button onclick="showSection('products')" class="text-left text-gray-700 hover:text-indigo-600">🛍 Products</button>
-      <button onclick="showSection('analytics')" class="text-left text-gray-700 hover:text-indigo-600">📈 Analytics</button>
-      <a href="#" class="text-red-600 hover:text-red-800">🚪 Logout</a>
-    </nav>
-  </aside>
+    <!-- Main Content -->
+    <main class="flex-1 p-8">
+      <h1 class="text-2xl font-bold mb-6">📦 Product List from Supabase</h1>
 
-  <!-- Main Content -->
-  <main class="flex-1 p-8 space-y-8">
-
-    <!-- Dashboard Section -->
-    <section id="dashboard" class="section active">
-      <h1 class="text-2xl font-bold mb-6">Welcome, Admin!</h1>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div class="bg-white p-4 shadow rounded">
-          <h2 class="text-lg font-semibold">Total Sales</h2>
-          <p class="text-2xl text-green-600">₹75,000</p>
-        </div>
-        <div class="bg-white p-4 shadow rounded">
-          <h2 class="text-lg font-semibold">Orders</h2>
-          <p class="text-2xl text-blue-600">150</p>
-        </div>
-        <div class="bg-white p-4 shadow rounded">
-          <h2 class="text-lg font-semibold">Visitors</h2>
-          <p class="text-2xl text-purple-600">3,200</p>
-        </div>
-        <div class="bg-white p-4 shadow rounded">
-          <h2 class="text-lg font-semibold">Products</h2>
-          <p class="text-2xl text-orange-600">320</p>
-        </div>
+      <div id="product-list" class="space-y-4">
+        <p class="text-gray-500">Loading products...</p>
       </div>
-      <div class="bg-white p-6 shadow rounded">
-        <h3 class="text-xl font-semibold mb-4">Sales Overview</h3>
-        <div class="h-64 bg-gray-100 flex items-center justify-center text-gray-400">[Sales Graph Here]</div>
-      </div>
-    </section>
+    </main>
+  </div>
 
-    <!-- Customers Section -->
-    <section id="customers" class="section">
-      <h2 class="text-xl font-bold mb-4">Customer Visit Logs</h2>
-      <table class="min-w-full text-sm bg-white shadow rounded overflow-hidden">
-        <thead class="bg-gray-200">
-          <tr>
-            <th class="px-4 py-2 text-left">Customer</th>
-            <th class="px-4 py-2 text-left">Visit Time</th>
-            <th class="px-4 py-2 text-left">Pages Viewed</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="px-4 py-2">John Doe</td>
-            <td class="px-4 py-2">10:00 AM</td>
-            <td class="px-4 py-2">5</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+  <!-- Supabase JS Integration -->
+  <script type="module">
+    // ✅ Step 1: Set up Supabase
+    const SUPABASE_URL = 'https://tkybnsyqxkhemuxohnqs.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRreWJuc3lxeGtoZW11eG9obnFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NDU3MjIsImV4cCI6MjA2ODIyMTcyMn0.UeiYJQto84QVLdszbiXR_S27LDOISFSyuHWRpiufV0k';
 
-    <!-- Orders Section -->
-    <section id="orders" class="section">
-      <h2 class="text-xl font-bold mb-4">Orders</h2>
-      <div class="bg-white shadow rounded p-4">[Orders list will go here]</div>
-    </section>
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    <!-- Products Section -->
-    <section id="products" class="section">
-      <h2 class="text-xl font-bold mb-4">Manage Products</h2>
-      <button onclick="toggleForm()" class="mb-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">+ Add New Product</button>
-      <div id="productForm" class="bg-gray-50 p-4 rounded shadow mb-4 hidden">
-        <input type="text" placeholder="Product Name" class="block mb-2 p-2 w-full border rounded" />
-        <input type="number" placeholder="Price" class="block mb-2 p-2 w-full border rounded" />
-        <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Save</button>
-      </div>
-      <ul id="product-list" class="space-y-2"></ul>
-    </section>
+    // ✅ Step 2: Fetch products
+    async function loadProducts() {
+      const list = document.getElementById('product-list');
+      list.innerHTML = "<p class='text-gray-500'>Fetching from Supabase...</p>";
 
-    <!-- Analytics Section -->
-    <section id="analytics" class="section">
-      <h2 class="text-xl font-bold mb-4">Analytics</h2>
-      <div class="bg-white p-6 shadow rounded">
-        <div class="h-64 bg-gray-100 flex items-center justify-center text-gray-400">[Analytics Graph]</div>
-      </div>
-    </section>
+      const { data, error } = await supabase.from('products').select('*');
 
-  </main>
-</div>
+      if (error) {
+        list.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+        return;
+      }
 
-<!-- ✅ Load Supabase library BEFORE using it -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+      if (data.length === 0) {
+        list.innerHTML = `<p class="text-yellow-500">No products found.</p>`;
+        return;
+      }
 
-<script>
-  function showSection(id) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-  }
-
-  function toggleForm() {
-    const form = document.getElementById('productForm');
-    form.classList.toggle('hidden');
-  }
-
-  // ✅ Supabase setup
-  const SUPABASE_URL = 'https://tkybnsyqxkhemuxohnqs.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRreWJuc3lxeGtoZW11eG9obnFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NDU3MjIsImV4cCI6MjA2ODIyMTcyMn0.UeiYJQto84QVLdszbiXR_S27LDOISFSyuHWRpiufV0k';
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  // 🧠 Fetch Products from Supabase
-  async function fetchProducts() {
-    const { data, error } = await supabase.from('products').select('*');
-    if (error) {
-      console.error('❌ Error fetching products:', error);
-      return;
+      list.innerHTML = ''; // Clear loading
+      data.forEach((product) => {
+        const item = document.createElement('div');
+        item.className = 'bg-white p-4 rounded shadow';
+        item.innerHTML = `
+          <h2 class="text-xl font-semibold">${product.name}</h2>
+          <p>💰 Price: ₹${product.price}</p>
+          <p>📦 Stock: ${product.stock}</p>
+        `;
+        list.appendChild(item);
+      });
     }
 
-    const list = document.getElementById('product-list');
-    list.innerHTML = '';
-
-    data.forEach((product) => {
-      const item = document.createElement('li');
-      item.className = 'flex justify-between bg-white p-4 rounded shadow';
-      item.innerHTML = `
-        <span>${product.name} - ₹${product.price} (Stock: ${product.stock})</span>
-        <div class="space-x-2">
-          <button class="text-blue-600 hover:underline">Edit</button>
-          <button class="text-red-600 hover:underline">Delete</button>
-        </div>
-      `;
-      list.appendChild(item);
-    });
-  }
-
-  // 📦 Load on page open
-  window.onload = fetchProducts;
-</script>
-
+    loadProducts();
+  </script>
 </body>
 </html>
