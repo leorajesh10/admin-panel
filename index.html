@@ -4,11 +4,9 @@
   <meta charset="UTF-8" />
   <title>Admin Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- ✅ TailwindCSS -->
+  <!-- ✅ Tailwind for styling -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- ✅ Supabase UMD version (for browsers) -->
+  <!-- ✅ Supabase (for browsers) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -18,40 +16,53 @@
     <aside class="w-64 bg-white shadow-md">
       <div class="p-6 font-bold text-xl text-indigo-600">🛠 Admin Panel</div>
       <nav class="flex flex-col px-4 space-y-4">
-        <a href="#" class="text-gray-700 hover:text-indigo-600">📊 Dashboard</a>
-        <a href="#" class="text-gray-700 hover:text-indigo-600">👥 Customers</a>
-        <a href="#" class="text-gray-700 hover:text-indigo-600">📦 Orders</a>
         <a href="#" class="text-indigo-600 font-semibold">🛍 Products</a>
-        <a href="#" class="text-gray-700 hover:text-indigo-600">📈 Analytics</a>
-        <a href="#" class="text-red-600 hover:text-red-800">🚪 Logout</a>
+        <a href="#" class="text-gray-700">👥 Customers</a>
+        <a href="#" class="text-gray-700">📦 Orders</a>
+        <a href="#" class="text-gray-700">📈 Analytics</a>
+        <a href="#" class="text-red-600">🚪 Logout</a>
       </nav>
     </aside>
 
     <!-- Main Content -->
     <main class="flex-1 p-8">
-      <h1 class="text-2xl font-bold mb-6">📦 Product List from Supabase</h1>
+      <h1 class="text-2xl font-bold mb-6">📦 Product Management</h1>
 
+      <!-- ✅ Product Form -->
+      <div class="bg-white p-6 rounded shadow mb-6">
+        <h2 class="text-xl font-semibold mb-4">➕ Add New Product</h2>
+        <form id="product-form" class="grid gap-4">
+          <input type="text" id="name" placeholder="Product Name" class="p-2 border rounded" required />
+          <input type="number" id="price" placeholder="Price ₹" class="p-2 border rounded" required />
+          <input type="number" id="stock" placeholder="Stock" class="p-2 border rounded" required />
+          <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">
+            Add Product
+          </button>
+        </form>
+      </div>
+
+      <!-- ✅ Product List -->
       <div id="product-list" class="space-y-4">
         <p class="text-gray-500">Loading products...</p>
       </div>
     </main>
   </div>
 
-  <!-- ✅ Connect Supabase + Load Data -->
+  <!-- ✅ Supabase Setup + Code -->
   <script>
-    // ✅ Supabase URL & Key
+    // ✅ Supabase Credentials
     const SUPABASE_URL = 'https://tkybnsyqxkhemuxohnqs.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRreWJuc3lxeGtoZW11eG9obnFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NDU3MjIsImV4cCI6MjA2ODIyMTcyMn0.UeiYJQto84QVLdszbiXR_S27LDOISFSyuHWRpiufV0k';
 
-    // ✅ Create Supabase client
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // ✅ Create Supabase client with different variable name
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ✅ Load Products
+    // ✅ Load Products from Supabase
     async function loadProducts() {
       const list = document.getElementById('product-list');
-      list.innerHTML = "<p class='text-gray-500'>Fetching products...</p>";
+      list.innerHTML = '<p class="text-gray-500">Loading from Supabase...</p>';
 
-      const { data, error } = await supabase.from('products').select('*');
+      const { data, error } = await client.from('products').select('*');
 
       if (error) {
         list.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
@@ -63,21 +74,39 @@
         return;
       }
 
-      list.innerHTML = ''; // Clear loading message
+      list.innerHTML = '';
       data.forEach((product) => {
         const item = document.createElement('div');
         item.className = 'bg-white p-4 rounded shadow';
         item.innerHTML = `
-          <h2 class="text-xl font-semibold">${product.name}</h2>
-          <p>💰 Price: ₹${product.price}</p>
-          <p>📦 Stock: ${product.stock}</p>
+          <h3 class="text-lg font-semibold">${product.name}</h3>
+          <p>💰 ₹${product.price} | 📦 Stock: ${product.stock}</p>
         `;
         list.appendChild(item);
       });
     }
 
-    // ✅ Run it on page load
+    // ✅ Handle Form Submission
+    const form = document.getElementById('product-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const price = parseFloat(document.getElementById('price').value);
+      const stock = parseInt(document.getElementById('stock').value);
+
+      const { error } = await client.from('products').insert([{ name, price, stock }]);
+
+      if (error) {
+        alert('❌ Error adding product: ' + error.message);
+      } else {
+        alert('✅ Product added!');
+        form.reset();
+        loadProducts();
+      }
+    });
+
+    // ✅ Load on page load
     loadProducts();
   </script>
-</body>
-</html>
+</bod
