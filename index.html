@@ -1,112 +1,607 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin Panel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- ✅ Tailwind for styling -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - MyShop</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- ✅ Supabase (for browsers) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .active-tab {
+      background-color: #e0e7ff;
+      color: #4f46e5;
+      font-weight: 600;
+    }
+    .color-option {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .color-option.selected {
+      border-color: #4f46e5;
+    }
+  </style>
 </head>
-
-<body class="bg-gray-100 text-gray-800 font-sans">
-  <div class="min-h-screen flex">
-    <!-- Sidebar -->
+<body class="bg-gray-100 font-sans">
+  <!-- Sidebar -->
+  <div class="flex min-h-screen">
     <aside class="w-64 bg-white shadow-md">
-      <div class="p-6 font-bold text-xl text-indigo-600">🛠 Admin Panel</div>
+      <div class="p-6 font-bold text-xl text-indigo-600">🛠️ Admin Panel</div>
       <nav class="flex flex-col px-4 space-y-4">
-        <a href="#" class="text-indigo-600 font-semibold">🛍 Products</a>
-        <a href="#" class="text-gray-700">👥 Customers</a>
-        <a href="#" class="text-gray-700">📦 Orders</a>
-        <a href="#" class="text-gray-700">📈 Analytics</a>
-        <a href="#" class="text-red-600">🚪 Logout</a>
+        <a href="#dashboard" class="text-gray-700 hover:text-indigo-600">📊 Dashboard</a>
+        <a href="#customers" class="text-gray-700 hover:text-indigo-600">👥 Customers</a>
+        <a href="#orders" class="text-gray-700 hover:text-indigo-600">📦 Orders</a>
+        <a href="#products" class="text-gray-700 hover:text-indigo-600">🛍️ Products</a>
+        <a href="#analytics" class="text-gray-700 hover:text-indigo-600">📈 Analytics</a>
+        <a href="#logout" class="text-red-600 hover:text-red-800">🚪 Logout</a>
       </nav>
     </aside>
 
     <!-- Main Content -->
     <main class="flex-1 p-8">
-      <h1 class="text-2xl font-bold mb-6">📦 Product Management</h1>
-
-      <!-- ✅ Product Form -->
-      <div class="bg-white p-6 rounded shadow mb-6">
-        <h2 class="text-xl font-semibold mb-4">➕ Add New Product</h2>
-        <form id="product-form" class="grid gap-4">
-          <input type="text" id="name" placeholder="Product Name" class="p-2 border rounded" required />
-          <input type="number" id="price" placeholder="Price ₹" class="p-2 border rounded" required />
-          <input type="number" id="stock" placeholder="Stock" class="p-2 border rounded" required />
-          <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">
-            Add Product
-          </button>
-        </form>
+      <!-- Dashboard View (Default) -->
+      <div id="dashboardView">
+        <h1 class="text-2xl font-bold mb-6">Dashboard Overview</h1>
+        
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          <!-- Total Orders -->
+          <div class="bg-white p-4 shadow rounded">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-gray-500 text-sm">Total Orders</h3>
+                <p class="text-2xl font-bold">1,248</p>
+              </div>
+              <span class="text-blue-500 bg-blue-100 p-3 rounded-full">🧾</span>
+            </div>
+          </div>
+          
+          <!-- Total Revenue -->
+          <div class="bg-white p-4 shadow rounded">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-gray-500 text-sm">Total Revenue</h3>
+                <p class="text-2xl font-bold">₹89,500</p>
+              </div>
+              <span class="text-green-500 bg-green-100 p-3 rounded-full">💰</span>
+            </div>
+          </div>
+          
+          <!-- Pending Orders -->
+          <div class="bg-white p-4 shadow rounded">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-gray-500 text-sm">Pending Orders</h3>
+                <p class="text-2xl font-bold">24</p>
+              </div>
+              <span class="text-yellow-500 bg-yellow-100 p-3 rounded-full">⏳</span>
+            </div>
+          </div>
+          
+          <!-- Customer Count -->
+          <div class="bg-white p-4 shadow rounded">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-gray-500 text-sm">Customers</h3>
+                <p class="text-2xl font-bold">586</p>
+              </div>
+              <span class="text-purple-500 bg-purple-100 p-3 rounded-full">👥</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Sales Chart + Notifications -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <!-- Sales Chart -->
+          <div class="lg:col-span-2 bg-white p-6 shadow rounded">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold">Sales Analytics</h3>
+              <select class="border rounded px-3 py-1 text-sm">
+                <option>Last 7 Days</option>
+                <option>Monthly</option>
+                <option>Yearly</option>
+              </select>
+            </div>
+            <div class="h-64 bg-gray-100 flex items-center justify-center text-gray-400">
+              [Chart.js Integration Here]
+            </div>
+          </div>
+          
+          <!-- Recent Notifications -->
+          <div class="bg-white p-6 shadow rounded">
+            <h3 class="text-lg font-semibold mb-4">🔔 Recent Activity</h3>
+            <div class="space-y-4">
+              <div class="flex items-start">
+                <span class="bg-blue-100 text-blue-600 p-2 rounded-full mr-3">🛒</span>
+                <div>
+                  <p class="font-medium">New Order #1256</p>
+                  <p class="text-sm text-gray-500">2 mins ago</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <span class="bg-green-100 text-green-600 p-2 rounded-full mr-3">👤</span>
+                <div>
+                  <p class="font-medium">Customer Signed Up</p>
+                  <p class="text-sm text-gray-500">15 mins ago</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <span class="bg-yellow-100 text-yellow-600 p-2 rounded-full mr-3">💬</span>
+                <div>
+                  <p class="font-medium">New Product Review</p>
+                  <p class="text-sm text-gray-500">1 hour ago</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Products Alerts + Messages -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Product Alerts -->
+          <div class="bg-white p-6 shadow rounded">
+            <h3 class="text-lg font-semibold mb-4">📦 Inventory Status</h3>
+            <div>
+              <p class="font-medium mb-1">Total Products: <span class="text-indigo-600">142</span></p>
+              <div class="mt-3 space-y-2">
+                <div class="flex justify-between items-center text-sm">
+                  <span>Out of Stock:</span>
+                  <span class="text-red-600 font-medium">5 items</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span>Low Stock (<10):</span>
+                  <span class="text-yellow-600 font-medium">12 items</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Customer Messages -->
+          <div class="lg:col-span-2 bg-white p-6 shadow rounded">
+            <h3 class="text-lg font-semibold mb-4">💬 Customer Messages</h3>
+            <div class="space-y-4">
+              <div class="border-b pb-3">
+                <p class="font-medium">"When will my order ship?"</p>
+                <p class="text-sm text-gray-500">From: user@example.com | 30 mins ago</p>
+              </div>
+              <div class="border-b pb-3">
+                <p class="font-medium">"Product damaged upon delivery"</p>
+                <p class="text-sm text-gray-500">From: customer@domain.com | 2 hours ago</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- ✅ Product List -->
-      <div id="product-list" class="space-y-4">
-        <p class="text-gray-500">Loading products...</p>
+      <!-- Product Management View (Hidden by Default) -->
+      <div id="productManagementView" class="hidden">
+        <!-- Product Management Header -->
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold">Product Management</h1>
+          <button id="addProductBtn" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">+ Add New Product</button>
+        </div>
+
+        <!-- Product List -->
+        <div id="productList" class="bg-white p-6 shadow rounded mb-6">
+          <h3 class="text-xl font-semibold mb-4">All Products</h3>
+          <div class="overflow-x-auto">
+            <table class="min-w-full">
+              <thead>
+                <tr class="bg-gray-200">
+                  <th class="px-4 py-2 text-left">Product</th>
+                  <th class="px-4 py-2 text-left">Price</th>
+                  <th class="px-4 py-2 text-left">Stock</th>
+                  <th class="px-4 py-2 text-left">Status</th>
+                  <th class="px-4 py-2 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b">
+                  <td class="px-4 py-3">
+                    <div class="flex items-center">
+                      <img src="https://via.placeholder.com/50" alt="Product" class="w-10 h-10 rounded mr-3">
+                      <span>Premium T-Shirt</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">₹799</td>
+                  <td class="px-4 py-3">42</td>
+                  <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Active</span></td>
+                  <td class="px-4 py-3">
+                    <button class="text-blue-600 hover:underline mr-2">Edit</button>
+                    <button class="text-red-600 hover:underline">Delete</button>
+                  </td>
+                </tr>
+                <tr class="border-b">
+                  <td class="px-4 py-3">
+                    <div class="flex items-center">
+                      <img src="https://via.placeholder.com/50" alt="Product" class="w-10 h-10 rounded mr-3">
+                      <span>Classic Jeans</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">₹1,299</td>
+                  <td class="px-4 py-3">18</td>
+                  <td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Active</span></td>
+                  <td class="px-4 py-3">
+                    <button class="text-blue-600 hover:underline mr-2">Edit</button>
+                    <button class="text-red-600 hover:underline">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Add/Edit Product Form (Hidden by Default) -->
+        <div id="productForm" class="bg-white p-6 shadow rounded hidden">
+          <h3 class="text-xl font-semibold mb-6">Add New Product</h3>
+          
+          <form id="productFormData">
+            <!-- Product Images Section -->
+            <div class="mb-8">
+              <h4 class="text-lg font-medium mb-4">Images and videos</h4>
+              <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <div id="imagePreview" class="flex flex-wrap gap-4 mb-4"></div>
+                <button type="button" id="uploadImagesBtn" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">ADD IMAGES</button>
+                <input type="file" id="productImages" multiple accept="image/*" class="hidden">
+              </div>
+            </div>
+
+            <!-- Product Info Section -->
+            <div class="mb-8">
+              <h4 class="text-lg font-medium mb-4">Product info</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                  <input type="text" id="productName" class="w-full px-3 py-2 border border-gray-300 rounded" placeholder="Add a product name">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Ribbon</label>
+                  <select id="productRibbon" class="w-full px-3 py-2 border border-gray-300 rounded">
+                    <option value="">None</option>
+                    <option value="new">New Arrival</option>
+                    <option value="sale">On Sale</option>
+                    <option value="bestseller">Bestseller</option>
+                  </select>
+                </div>
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea id="productDescription" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded" placeholder="Generate AI Text"></textarea>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center space-x-4">
+                <div class="flex items-center">
+                  <input type="checkbox" id="showOnline" class="h-4 w-4 text-indigo-600 border-gray-300 rounded" checked>
+                  <label for="showOnline" class="ml-2 text-sm text-gray-700">Show in online store</label>
+                </div>
+                <div class="flex items-center">
+                  <input type="checkbox" id="showPOS" class="h-4 w-4 text-indigo-600 border-gray-300 rounded" checked>
+                  <label for="showPOS" class="ml-2 text-sm text-gray-700">Show in Point of Sale</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Categories Section -->
+            <div class="mb-8">
+              <h4 class="text-lg font-medium mb-4">Categories</h4>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="bg-gray-200 px-3 py-1 rounded-full text-sm">All Products</span>
+                <span class="bg-gray-200 px-3 py-1 rounded-full text-sm">Clothing</span>
+                <span class="bg-gray-200 px-3 py-1 rounded-full text-sm">Men</span>
+                <button type="button" class="text-indigo-600 hover:text-indigo-800 text-sm">+ Create Category</button>
+              </div>
+            </div>
+
+            <!-- Pricing Section -->
+            <div class="mb-8">
+              <h4 class="text-lg font-medium mb-4">Pricing</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
+                  <input type="number" id="productPrice" class="w-full px-3 py-2 border border-gray-300 rounded" placeholder="0.00">
+                  <div class="mt-2 flex items-center">
+                    <input type="checkbox" id="onSale" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                    <label for="onSale" class="ml-2 text-sm text-gray-700">On sale</label>
+                  </div>
+                  <div class="mt-1 flex items-center">
+                    <input type="checkbox" id="showPricePerUnit" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                    <label for="showPricePerUnit" class="ml-2 text-sm text-gray-700">Show price per unit</label>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Cost of goods (₹)</label>
+                  <input type="number" id="productCost" class="w-full px-3 py-2 border border-gray-300 rounded" placeholder="0.00">
+                  <div class="mt-2 flex items-center space-x-4">
+                    <div class="flex items-center">
+                      <input type="radio" id="showProfit" name="costDisplay" class="h-4 w-4 text-indigo-600 border-gray-300">
+                      <label for="showProfit" class="ml-2 text-sm text-gray-700">Profit</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input type="radio" id="showMargin" name="costDisplay" class="h-4 w-4 text-indigo-600 border-gray-300">
+                      <label for="showMargin" class="ml-2 text-sm text-gray-700">Margin</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Product Options Section -->
+            <div class="mb-8">
+              <h4 class="text-lg font-medium mb-4">Product options</h4>
+              <p class="text-sm text-gray-600 mb-4">Does your product come in different options, like size, color or material? Add them here.</p>
+              
+              <!-- Color Options -->
+              <div class="mb-6">
+                <h5 class="font-medium mb-2">Color Options</h5>
+                <div class="flex flex-wrap gap-3 mb-4">
+                  <div class="color-option bg-red-500 selected" data-color="red"></div>
+                  <div class="color-option bg-blue-500" data-color="blue"></div>
+                  <div class="color-option bg-green-500" data-color="green"></div>
+                  <div class="color-option bg-yellow-500" data-color="yellow"></div>
+                  <div class="color-option bg-black" data-color="black"></div>
+                  <div class="color-option bg-white border border-gray-300" data-color="white"></div>
+                  <div class="color-option bg-purple-500" data-color="purple"></div>
+                </div>
+                
+                <!-- Size and Price for Selected Colors -->
+                <div id="colorVariants" class="space-y-4">
+                  <div class="color-variant" data-color="red">
+                    <div class="flex items-center mb-2">
+                      <span class="font-medium mr-3">Red</span>
+                      <button type="button" class="text-red-600 text-sm">Remove</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label class="block text-sm text-gray-700 mb-1">Size</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+                          <option>Select size</option>
+                          <option>S</option>
+                          <option>M</option>
+                          <option>L</option>
+                          <option>XL</option>
+                          <option>XXL</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="block text-sm text-gray-700 mb-1">Price (₹)</label>
+                        <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="0.00">
+                      </div>
+                      <div>
+                        <label class="block text-sm text-gray-700 mb-1">Stock</label>
+                        <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="0">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" id="addColorBtn" class="mt-2 text-indigo-600 hover:text-indigo-800 text-sm">+ Add another color</button>
+              </div>
+
+              <!-- Custom Text Field -->
+              <div class="mb-6">
+                <h5 class="font-medium mb-2">Custom Text</h5>
+                <p class="text-sm text-gray-600 mb-2">Allow customers to personalize this product with a custom text field.</p>
+                <button type="button" id="addCustomTextBtn" class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm">Add Custom Text Field</button>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end space-x-4">
+              <button type="button" id="cancelProductBtn" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100">Cancel</button>
+              <button type="submit" id="saveProductBtn" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Save Product</button>
+            </div>
+          </form>
+        </div>
       </div>
     </main>
   </div>
 
-  <!-- ✅ Supabase Setup + Code -->
   <script>
-    // ✅ Supabase Credentials
-    const SUPABASE_URL = 'https://tkybnsyqxkhemuxohnqs.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRreWJuc3lxeGtoZW11eG9obnFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NDU3MjIsImV4cCI6MjA2ODIyMTcyMn0.UeiYJQto84QVLdszbiXR_S27LDOISFSyuHWRpiufV0k';
+    document.addEventListener('DOMContentLoaded', function() {
+      // ==================== PRODUCT MANAGEMENT ====================
+      // DOM Elements
+      const addProductBtn = document.getElementById('addProductBtn');
+      const productList = document.getElementById('productList');
+      const productForm = document.getElementById('productForm');
+      const cancelProductBtn = document.getElementById('cancelProductBtn');
+      const uploadImagesBtn = document.getElementById('uploadImagesBtn');
+      const productImages = document.getElementById('productImages');
+      const imagePreview = document.getElementById('imagePreview');
+      const colorOptions = document.querySelectorAll('.color-option');
+      const colorVariants = document.getElementById('colorVariants');
+      const addColorBtn = document.getElementById('addColorBtn');
+      const addCustomTextBtn = document.getElementById('addCustomTextBtn');
+      const productFormData = document.getElementById('productFormData');
 
-    // ✅ Create Supabase client with different variable name
-    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    // ✅ Load Products from Supabase
-    async function loadProducts() {
-      const list = document.getElementById('product-list');
-      list.innerHTML = '<p class="text-gray-500">Loading from Supabase...</p>';
-
-      const { data, error } = await client.from('products').select('*');
-
-      if (error) {
-        list.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
-        return;
-      }
-
-      if (data.length === 0) {
-        list.innerHTML = `<p class="text-yellow-500">No products found.</p>`;
-        return;
-      }
-
-      list.innerHTML = '';
-      data.forEach((product) => {
-        const item = document.createElement('div');
-        item.className = 'bg-white p-4 rounded shadow';
-        item.innerHTML = `
-          <h3 class="text-lg font-semibold">${product.name}</h3>
-          <p>💰 ₹${product.price} | 📦 Stock: ${product.stock}</p>
-        `;
-        list.appendChild(item);
+      // Toggle between product list and form
+      addProductBtn.addEventListener('click', function() {
+        productList.classList.add('hidden');
+        productForm.classList.remove('hidden');
       });
-    }
 
-    // ✅ Handle Form Submission
-    const form = document.getElementById('product-form');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+      cancelProductBtn.addEventListener('click', function() {
+        productList.classList.remove('hidden');
+        productForm.classList.add('hidden');
+      });
 
-      const name = document.getElementById('name').value;
-      const price = parseFloat(document.getElementById('price').value);
-      const stock = parseInt(document.getElementById('stock').value);
+      // Image upload functionality
+      uploadImagesBtn.addEventListener('click', function() {
+        productImages.click();
+      });
 
-      const { error } = await client.from('products').insert([{ name, price, stock }]);
+      productImages.addEventListener('change', function(e) {
+        const files = e.target.files;
+        imagePreview.innerHTML = '';
+        
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const reader = new FileReader();
+          
+          reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'w-20 h-20 object-cover rounded';
+            imagePreview.appendChild(img);
+          }
+          
+          reader.readAsDataURL(file);
+        }
+      });
 
-      if (error) {
-        alert('❌ Error adding product: ' + error.message);
-      } else {
-        alert('✅ Product added!');
-        form.reset();
-        loadProducts();
+      // Color selection functionality
+      colorOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          const color = this.getAttribute('data-color');
+          
+          // Toggle selected class
+          this.classList.toggle('selected');
+          
+          // Add or remove color variant
+          if (this.classList.contains('selected')) {
+            if (!document.querySelector(`.color-variant[data-color="${color}"]`)) {
+              addColorVariant(color);
+            }
+          } else {
+            const variant = document.querySelector(`.color-variant[data-color="${color}"]`);
+            if (variant) {
+              variant.remove();
+            }
+          }
+        });
+      });
+
+      // Add new color variant
+      function addColorVariant(color) {
+        const colorName = color.charAt(0).toUpperCase() + color.slice(1);
+        const variantHTML = `
+          <div class="color-variant" data-color="${color}">
+            <div class="flex items-center mb-2">
+              <span class="font-medium mr-3">${colorName}</span>
+              <button type="button" class="text-red-600 text-sm remove-color">Remove</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm text-gray-700 mb-1">Size</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+                  <option>Select size</option>
+                  <option>S</option>
+                  <option>M</option>
+                  <option>L</option>
+                  <option>XL</option>
+                  <option>XXL</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm text-gray-700 mb-1">Price (₹)</label>
+                <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="0.00">
+              </div>
+              <div>
+                <label class="block text-sm text-gray-700 mb-1">Stock</label>
+                <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="0">
+              </div>
+            </div>
+          </div>
+        `;
+        
+        colorVariants.insertAdjacentHTML('beforeend', variantHTML);
+        
+        // Add event listener to the new remove button
+        const newVariant = colorVariants.lastElementChild;
+        newVariant.querySelector('.remove-color').addEventListener('click', function() {
+          newVariant.remove();
+          // Also remove the selected class from the color option
+          document.querySelector(`.color-option[data-color="${color}"]`).classList.remove('selected');
+        });
       }
-    });
 
-    // ✅ Load on page load
-    loadProducts();
+      // Add custom text field
+      addCustomTextBtn.addEventListener('click', function() {
+        const customTextHTML = `
+          <div class="custom-text-field mb-4 p-4 bg-gray-50 rounded">
+            <div class="flex justify-between items-center mb-2">
+              <h6 class="font-medium">Custom Text Field</h6>
+              <button type="button" class="text-red-600 text-sm remove-custom-text">Remove</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-gray-700 mb-1">Field Label</label>
+                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="e.g., Engraving Text">
+              </div>
+              <div>
+                <label class="block text-sm text-gray-700 mb-1">Max Characters</label>
+                <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="50">
+              </div>
+            </div>
+            <div class="mt-2">
+              <label class="block text-sm text-gray-700 mb-1">Additional Price (₹)</label>
+              <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="0.00">
+            </div>
+          </div>
+        `;
+        
+        this.insertAdjacentHTML('beforebegin', customTextHTML);
+        
+        // Add event listener to the new remove button
+        const newCustomField = this.previousElementSibling;
+        newCustomField.querySelector('.remove-custom-text').addEventListener('click', function() {
+          newCustomField.remove();
+        });
+      });
+
+      // Form submission
+      productFormData.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Here you would normally send the form data to your server
+        alert('Product saved successfully!');
+        
+        // For demo purposes, just go back to the product list
+        productList.classList.remove('hidden');
+        productForm.classList.add('hidden');
+        
+        // Reset form
+        this.reset();
+        imagePreview.innerHTML = '';
+        colorVariants.innerHTML = '';
+        
+        // Reset color selections
+        document.querySelectorAll('.color-option').forEach(option => {
+          option.classList.remove('selected');
+        });
+        
+        // Add red color back as it's selected by default
+        document.querySelector('.color-option[data-color="red"]').classList.add('selected');
+        addColorVariant('red');
+      });
+
+      // ==================== DASHBOARD NAVIGATION ====================
+      document.querySelectorAll('aside nav a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          
+          // Hide all views
+          document.querySelectorAll('main > div').forEach(view => {
+            view.classList.add('hidden');
+          });
+          
+          // Show selected view
+          const target = link.getAttribute('href').replace('#', '');
+          if (target === 'products') {
+            document.getElementById('productManagementView').classList.remove('hidden');
+          } else if (target === 'dashboard') {
+            document.getElementById('dashboardView').classList.remove('hidden');
+          }
+          
+          // Update active tab styling
+          document.querySelectorAll('aside nav a').forEach(navLink => {
+            navLink.classList.remove('active-tab');
+          });
+          link.classList.add('active-tab');
+        });
+      });
+
+      // Initialize dashboard as default view
+      document.querySelector('aside nav a[href="#dashboard"]').click();
+    });
   </script>
-</bod
+</body>
+</html>
